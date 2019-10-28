@@ -4,7 +4,13 @@ branches:
   only:
     - master
 
+skip_tags: false
+skip_non_tags: true
+
 skip_branch_with_pr: true
+
+skip_commits:
+  message: /-nobuild-/      # Regex for matching commit message
 
 image: Visual Studio 2019 
 
