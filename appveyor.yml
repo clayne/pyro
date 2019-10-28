@@ -22,6 +22,7 @@ matrix:
 install:
   - pip install pipenv
   - pipenv install
+  - pipenv install nuitka
 
 platform:
   - Any CPU
