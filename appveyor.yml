@@ -6,7 +6,13 @@ branches:
 
 skip_branch_with_pr: true
 
-image: Python 3.7.4 x86 
+image: Visual Studio 2019 
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python37"
+
+build: off
 
 matrix:
   fast_finish: true
