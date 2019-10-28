@@ -1,0 +1,35 @@
+version: '1.3.3b{build}'
+
+branches:
+  only:
+    - master
+
+skip_branch_with_pr: true
+
+image: Python 3.7.4 x86 
+
+matrix:
+  fast_finish: true
+
+# cache:
+
+install:
+  - pip install pipenv
+  - pipenv install
+
+platform:
+  - Any CPU
+
+configuration: Debug
+
+build_script:
+  - pipenv run python build.py
+
+deploy:
+  - provider: GitHub
+    artifact: /.*\.zip/
+    draft: false
+    prerelease: true
+    on:
+      branch: master                # release from master branch only
+      APPVEYOR_REPO_TAG: true       # deploy on tag push only
