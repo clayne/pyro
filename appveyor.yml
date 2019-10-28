@@ -1,21 +1,32 @@
-version: '1.3.3b{build}'
+version: 'pyro_cli_build.{build}'
 
-branches:
-  only:
-    - master
+skip_tags: false
 
-skip_branch_with_pr: true
+skip_non_tags: false
 
-image: Python 3.7.4 x86 
+skip_branch_with_pr: false
+
+skip_commits:
+  message: /-nobuild-/              # Regex for matching commit message
+
+image: Visual Studio 2019 
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python37"
+
+build: off                          # disable Visual Studio SLN build process
 
 matrix:
   fast_finish: true
 
-# cache:
+cache:
+- '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
   - pip install pipenv
-  - pipenv install
+  - pipenv update
+  - pipenv install nuitka
 
 platform:
   - Any CPU
@@ -25,11 +36,20 @@ configuration: Debug
 build_script:
   - pipenv run python build.py
 
+
+artifacts:
+  - path: '**\*.zip'
+
 deploy:
-  - provider: GitHub
-    artifact: /.*\.zip/
-    draft: false
-    prerelease: true
-    on:
-      branch: master                # release from master branch only
-      APPVEYOR_REPO_TAG: true       # deploy on tag push only
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  release: 'Standalone Pyro CLI $(appveyor_repo_tag_name) (build $(appveyor_build_version))'
+  description: 'Pyro CLI version $(appveyor_repo_tag_name) (Automated pre-release via AppVeyor)'
+  provider: GitHub
+  auth_token:
+    secure: EhiervZBkremCKMnk/LFCC3XTbLfgu6hfWrxBIDWr9Oxf84OO4BKcH6OyH19WrBf
+  artifact: /.*\.zip/
+  draft: true
+  prerelease: true
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
