@@ -33,10 +33,14 @@ build_script:
   - pipenv run python build.py
 
 deploy:
-  - provider: GitHub
-    artifact: /.*\.zip/
-    draft: false
-    prerelease: true
-    on:
-      branch: master                # release from master branch only
-      APPVEYOR_REPO_TAG: true       # deploy on tag push only
+  release: pyro_cli-v$(appveyor_build_version)
+  description: 'Automated release via AppVeyor'
+  provider: GitHub
+  auth_token:
+    secure: EhiervZBkremCKMnk/LFCC3XTbLfgu6hfWrxBIDWr9Oxf84OO4BKcH6OyH19WrBf
+  artifact: /.*\.zip/
+  draft: false
+  prerelease: true
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
