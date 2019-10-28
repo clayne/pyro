@@ -2,7 +2,7 @@ version: '1.3.3b{build}'
 
 skip_tags: false
 
-skip_non_tags: true
+skip_non_tags: false
 
 skip_branch_with_pr: true
 
@@ -40,6 +40,7 @@ artifacts:
   - path: '**\*.zip'
 
 deploy:
+  tag: $(APPVEYOR_REPO_TAG_NAME)
   release: pyro_cli-v$(appveyor_build_version)-$(appveyor_repo_tag_name)
   description: 'Automated release via AppVeyor'
   provider: GitHub
