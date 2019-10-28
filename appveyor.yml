@@ -33,7 +33,7 @@ build_script:
   - pipenv run python build.py
 
 deploy:
-  release: pyro_cli-v$(appveyor_build_version)
+  release: pyro_cli-v$(appveyor_build_version)-$(appveyor_repo_tag_name)
   description: 'Automated release via AppVeyor'
   provider: GitHub
   auth_token:
