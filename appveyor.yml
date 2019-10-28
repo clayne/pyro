@@ -32,6 +32,10 @@ configuration: Debug
 build_script:
   - pipenv run python build.py
 
+
+artifacts:
+  - path: '**\*.zip'
+
 deploy:
   release: pyro_cli-v$(appveyor_build_version)-$(appveyor_repo_tag_name)
   description: 'Automated release via AppVeyor'
