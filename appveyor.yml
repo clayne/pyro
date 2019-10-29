@@ -24,7 +24,7 @@ cache:
 - '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
-  - pip install --force-reinstall pipenv
+  - pip install pipenv
   - pipenv update
   - pipenv install nuitka
 
