@@ -1,4 +1,4 @@
-version: '$(APPVEYOR_REPO_TAG_NAME).{build}'
+version: 'pyro_cli_build.{build}'
 
 skip_tags: false
 
@@ -7,7 +7,7 @@ skip_non_tags: false
 skip_branch_with_pr: false
 
 skip_commits:
-  message: /-nobuild-/      # Regex for matching commit message
+  message: /-nobuild-/              # Regex for matching commit message
 
 image: Visual Studio 2019 
 
@@ -15,10 +15,13 @@ environment:
   matrix:
     - PYTHON: "C:\\Python37"
 
-build: off # disable Visual Studio SLN build process
+build: off                          # disable Visual Studio SLN build process
 
 matrix:
   fast_finish: true
+
+cache:
+- '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
   - pip -v install pipenv
