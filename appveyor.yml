@@ -24,9 +24,9 @@ cache:
 - '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
-  - pip -v install pipenv
-  - pipenv -v install
-  - pipenv -v install nuitka
+  - pip install pipenv
+  - pipenv install
+  - pipenv install nuitka
 
 platform:
   - Any CPU
