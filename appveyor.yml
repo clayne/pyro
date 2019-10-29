@@ -21,8 +21,6 @@ matrix:
   fast_finish: true
 
 cache:
-- 'c:\python27\Scripts'             #
-- 'c:\python27\lib\site-packages'   #
 - '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
