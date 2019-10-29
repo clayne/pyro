@@ -1,4 +1,4 @@
-version: 'pyro_cli_build.{build}'
+version: 'build.{build}'            # this is $(appveyor_build_version)
 
 skip_tags: false
 
@@ -42,8 +42,10 @@ artifacts:
 
 deploy:
   tag: $(APPVEYOR_REPO_TAG_NAME)
-  release: 'Standalone Pyro CLI $(appveyor_repo_tag_name) (build $(appveyor_build_version))'
-  description: 'Pyro CLI version $(appveyor_repo_tag_name) (Automated pre-release via AppVeyor)'
+  release: 'Standalone Pyro CLI $(appveyor_repo_tag_name) ($(appveyor_build_version))'
+  description: >
+      Standalone executable Pyro CLI version $(appveyor_repo_tag_name)
+      (Automated build via AppVeyor, $(appveyor_build_version))
   provider: GitHub
   auth_token:
     secure: EhiervZBkremCKMnk/LFCC3XTbLfgu6hfWrxBIDWr9Oxf84OO4BKcH6OyH19WrBf
