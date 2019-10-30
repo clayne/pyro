@@ -49,7 +49,8 @@ cache:
 
 install:
   - python -m pip install --upgrade pip
-  - pip install pipenv
+  - python -m pip install pipenv
+  - which pipenv
   - pipenv update
   - pipenv install nuitka
 
