@@ -1,4 +1,4 @@
-version: 'build.{build}'            # this is $(appveyor_build_version)
+version: '{branch}.{build}'            # this is $(appveyor_build_version)
 
 skip_tags: false
 
@@ -10,42 +10,38 @@ branches:
   only:
     - master
 
-#skip_commits:                       # Just use [skip ci]
-#  message: /-nobuild-/              # Regex for matching commit message
-
 skip_commits:
+  message: /^Changes:/              # Regex for matching commit message
   files:
+    - CHANGELOG.md
     - LICENSE
     - README.md
     - .gitignore
     - Pipfile.lock
 
-
 image: Visual Studio 2019 
 
 environment:
+  APPVEYOR_CACHE_SKIP_RESTORE: 'false'
+  APPVEYOR_CACHE_SKIP_SAVE: 'false'
   matrix:
     - PYTHON: "C:\\Python37"
-
-build: off                          # disable Visual Studio SLN build process
 
 matrix:
   fast_finish: true
 
 # Set to true to skip cache restore or save
 init:
-  - ps: $env:APPVEYOR_CACHE_SKIP_RESTORE = "false"
-  - ps: $env:APPVEYOR_CACHE_SKIP_SAVE = "false"
   - ps: $env:PATH="$env:PYTHON;$env:PYTHON\Scripts;$env:PATH"
-  - ps: echo $env:PATH
-  - ps: echo $env:PYTHON
+  - ps: echo "$env:PATH"
+  - ps: echo "$env:PYTHON
   - ps: python -V
   - ps: which python
   - ps: which pip
 
 cache:
-- 'C:\\Python37'
-- '%USERPROFILE%\.virtualenvs'      # pipenv package installs
+  - 'C:\\Python37'
+  - '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
   - python -m pip install --upgrade pip
@@ -54,14 +50,16 @@ install:
   - pipenv update
   - pipenv install nuitka
 
-platform:
-  - Any CPU
+platform: Any CPU
 
 configuration: Debug
+
+build: off                          # disable Visual Studio SLN build process
 
 build_script:
   - pipenv run python build.py
 
+test: off
 
 artifacts:
   - path: '**\*.zip'
@@ -82,3 +80,10 @@ deploy:
   on:
     branch: master                 # release from master branch only
     APPVEYOR_REPO_TAG: true        # deploy on tag push only
+
+notifications:
+  - provider: Webhook
+    url: https://discordapp.com/api/webhooks/639029055458377729/NdAguAkN7PqBTQCmmU46XZmSe9l-vNno6aKa43MjGLlVkr-2C8YBSg_LI6s962MdsVBz
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: true
