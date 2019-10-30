@@ -1,3 +1,9 @@
+# Note About This Fork
+
+Note that this is a fork of the original project at [fireundubh/pyro](https://github.com/fireundubh/pyro). It exists primarily so I can maintain a fork of the project intended to work with the [joelday/papyrus-lang](https://github.com/joelday/papyrus-lang) VSCode extension. Note that fireundubh is still adding new features slowly and this fork could be missing them so always check the status of the original project before using this.
+
+Original documentation is below with some build documentation added.
+
 # Pyro
 
 Pyro is a semi-automated incremental build system for _Skyrim Classic_ (TESV), _Skyrim Special Edition_ (SSE), and _Fallout 4_ (FO4) projects. Pyro makes quick work of the process for creating new builds of mods for those games.
