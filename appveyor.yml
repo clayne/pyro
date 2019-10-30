@@ -6,8 +6,20 @@ skip_non_tags: false
 
 skip_branch_with_pr: false
 
+branches:
+  only:
+    - master
+
+#skip_commits:                       # Just use [skip ci]
+#  message: /-nobuild-/              # Regex for matching commit message
+
 skip_commits:
-  message: /-nobuild-/              # Regex for matching commit message
+  files:
+    - LICENSE
+    - README.md
+    - .gitignore
+    - Pipfile.lock
+
 
 image: Visual Studio 2019 
 
@@ -20,7 +32,13 @@ build: off                          # disable Visual Studio SLN build process
 matrix:
   fast_finish: true
 
+# Set to true to skip cache restore or save
+init:
+  - ps: $env:APPVEYOR_CACHE_SKIP_RESTORE = "false"
+  - ps: $env:APPVEYOR_CACHE_SKIP_SAVE = "false"
+
 cache:
+- 'C:\\Python37'
 - '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
@@ -46,6 +64,7 @@ deploy:
   description: >
       Standalone executable Pyro CLI version $(appveyor_repo_tag_name)
       (Automated build via AppVeyor, $(appveyor_build_version))
+      $(APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED)
   provider: GitHub
   auth_token:
     secure: EhiervZBkremCKMnk/LFCC3XTbLfgu6hfWrxBIDWr9Oxf84OO4BKcH6OyH19WrBf
