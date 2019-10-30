@@ -40,12 +40,15 @@ init:
   - ps: echo $env:PATH
   - ps: echo $env:PYTHON
   - ps: python -V
+  - ps: which python
+  - ps: which pip
 
 cache:
 - 'C:\\Python37'
 - '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
+  - python -m pip install --upgrade pip
   - pip install pipenv
   - pipenv update
   - pipenv install nuitka
