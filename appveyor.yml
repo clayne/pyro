@@ -81,10 +81,9 @@ deploy:
     branch: master                 # release from master branch only
     APPVEYOR_REPO_TAG: true        # deploy on tag push only
 
-notifications:
-  - provider: Slack     # actually for Discord but Discord know's Slack format messages
-    url: https://discordapp.com/api/webhooks/639029055458377729/NdAguAkN7PqBTQCmmU46XZmSe9l-vNno6aKa43MjGLlVkr-2C8YBSg_LI6s962MdsVBz/slack
-    channel: notifications
-    on_build_success: true
-    on_build_failure: true
-    on_build_status_changed: true
+on_success:
+  - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+  - ps: ./send.ps1 success $env:WEBHOOK_URL
+on_failure:
+  - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+  - ps: ./send.ps1 failure $env:WEBHOOK_URL
