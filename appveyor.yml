@@ -34,7 +34,7 @@ matrix:
 init:
   - ps: $env:PATH="$env:PYTHON;$env:PYTHON\Scripts;$env:PATH"
   - ps: echo "$env:PATH"
-  - ps: echo "$env:PYTHON
+  - ps: echo "$env:PYTHON"
   - ps: python -V
   - ps: which python
   - ps: which pip
@@ -82,8 +82,9 @@ deploy:
     APPVEYOR_REPO_TAG: true        # deploy on tag push only
 
 notifications:
-  - provider: Webhook
-    url: https://discordapp.com/api/webhooks/639029055458377729/NdAguAkN7PqBTQCmmU46XZmSe9l-vNno6aKa43MjGLlVkr-2C8YBSg_LI6s962MdsVBz
+  - provider: Slack     # actually for Discord but Discord know's Slack format messages
+    url: https://discordapp.com/api/webhooks/639029055458377729/NdAguAkN7PqBTQCmmU46XZmSe9l-vNno6aKa43MjGLlVkr-2C8YBSg_LI6s962MdsVBz/slack
+    channel: notifications
     on_build_success: true
     on_build_failure: true
     on_build_status_changed: true
