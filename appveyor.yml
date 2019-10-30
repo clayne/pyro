@@ -36,7 +36,7 @@ matrix:
 init:
   - ps: $env:APPVEYOR_CACHE_SKIP_RESTORE = "false"
   - ps: $env:APPVEYOR_CACHE_SKIP_SAVE = "false"
-  - ps: $env:PATH="$env:PYTHON;$env:PATH"
+  - ps: $env:PATH="$env:PYTHON;$env:PYTHON\Scripts;$env:PATH"
   - ps: echo $env:PATH
   - ps: echo $env:PYTHON
   - ps: python -V
