@@ -54,6 +54,11 @@ class Application:
 
         project = Project(project_options)
 
+        print(  '************************************'
+                '****** Pyro CLI by fireundubh ******'
+                '************************************'
+                '    (VSCode papyrus-lang fork)')
+
         time_elapsed = TimeElapsed()
 
         ppj = PapyrusProject(project)
