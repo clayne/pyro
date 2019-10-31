@@ -1,0 +1,88 @@
+version: '{branch}.{build}'            # this is $(appveyor_build_version)
+
+skip_tags: false
+
+skip_non_tags: false
+
+skip_branch_with_pr: false
+
+branches:
+  only:
+    - master
+
+skip_commits:
+  files:
+    - CHANGELOG.md
+    - LICENSE
+    - README.md
+    - .gitignore
+    - Pipfile.lock
+
+image: Visual Studio 2019 
+
+environment:
+  APPVEYOR_CACHE_SKIP_RESTORE: 'false'
+  APPVEYOR_CACHE_SKIP_SAVE: 'false'
+  matrix:
+    - PYTHON: "C:\\Python37"
+
+matrix:
+  fast_finish: true
+
+# Set to true to skip cache restore or save
+init:
+  - ps: $env:PATH="$env:PYTHON;$env:PYTHON\Scripts;$env:PATH"
+  - ps: echo "$env:PATH"
+  - ps: echo "$env:PYTHON"
+  - ps: python -V
+  - ps: which python
+  - ps: which pip
+
+cache:
+  - 'C:\\Python37'
+  - '%USERPROFILE%\.virtualenvs'      # pipenv package installs
+
+install:
+  - ps: Set-Content -Path 'VERSION' -Value ([io.file]::ReadAllText([string](Get-Location) + '\VERSION').trim() + ".${env:APPVEYOR_BUILD_NUMBER}")
+  - python -m pip install --upgrade pip
+  - python -m pip install --upgrade pipenv
+  - which pipenv
+  - pipenv update
+  - pipenv install nuitka
+
+platform: Any CPU
+
+configuration: Debug
+
+build: off                          # disable Visual Studio SLN build process
+
+build_script:
+  - pipenv run python build.py
+
+test: off
+
+artifacts:
+  - path: '**\*.zip'
+
+deploy:
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  release: 'Standalone Pyro CLI $(appveyor_repo_tag_name) ($(appveyor_build_version))'
+  description: >
+      Standalone executable Pyro CLI version $(appveyor_repo_tag_name)
+      (Automated build via AppVeyor, $(appveyor_build_version))
+  provider: GitHub
+  auth_token:
+    secure: EhiervZBkremCKMnk/LFCC3XTbLfgu6hfWrxBIDWr9Oxf84OO4BKcH6OyH19WrBf
+  artifact: /.*\.zip/
+  draft: true
+  prerelease: true
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
+
+on_success:
+  - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+  - ps: ./send.ps1 success $env:WEBHOOK_URL
+on_failure:
+  - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+  - ps: ./send.ps1 failure $env:WEBHOOK_URL

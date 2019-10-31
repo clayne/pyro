@@ -9,7 +9,6 @@ from glob import glob
 with open(os.path.join(os.path.dirname(__file__),'VERSION'), 'r') as f:
     version = f.read().strip()
 
-
 class Application:
     def __init__(self, args: argparse.Namespace) -> None:
         self.cwd: str = os.getcwd()
