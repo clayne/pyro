@@ -52,7 +52,7 @@ class Application:
 
         files: list = [f for f in glob(os.path.join(path, '**\*'), recursive=True) if os.path.isfile(f)]
 
-        with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, compressLevel=9) as z:
+        with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
             for f in files:
                 z.write(f, os.path.join(self.package_name, os.path.relpath(f, path)), compress_type=zipfile.ZIP_LZMA)
                 print('Added file to archive: %s' % f)
