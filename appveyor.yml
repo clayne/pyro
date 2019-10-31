@@ -43,6 +43,7 @@ cache:
   - '%USERPROFILE%\.virtualenvs'      # pipenv package installs
 
 install:
+  - ps: Set-Content -Path 'VERSION' -Value ([io.file]::ReadAllText([string](Get-Location) + '\VERSION').trim() + ".${env:APPVEYOR_BUILD_NUMBER}")
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade pipenv
   - which pipenv

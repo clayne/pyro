@@ -6,7 +6,8 @@ import sys
 import zipfile
 from glob import glob
 
-version='1.3.3vs4'
+with open(os.path.join(os.path.dirname(__file__),'VERSION'), 'r') as f:
+    version = f.read()
 
 class Application:
     def __init__(self, args: argparse.Namespace) -> None:
@@ -52,7 +53,7 @@ class Application:
 
         files: list = [f for f in glob(os.path.join(path, '**\*'), recursive=True) if os.path.isfile(f)]
 
-        with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, compressLevel=9) as z:
+        with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
             for f in files:
                 z.write(f, os.path.join(self.package_name, os.path.relpath(f, path)), compress_type=zipfile.ZIP_LZMA)
                 print('Added file to archive: %s' % f)
@@ -91,6 +92,7 @@ class Application:
 
         print('Building archive...')
         shutil.copyfile(os.path.join('pyro_cli','pyro.ini'),os.path.join(dist_folder,'pyro.ini'))
+        shutil.copyfile('VERSION',os.path.join(dist_folder,'VERSION'))
         zip_created: str = self._build_zip_archive(dist_folder)
         print('Wrote archive: %s' % zip_created)
 
