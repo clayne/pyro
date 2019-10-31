@@ -2,7 +2,7 @@ from setuptools import setup
 import os
 
 with open(os.path.join(os.path.dirname(__file__),'..','VERSION'), 'r') as f:
-    version = f.read().trim()
+    version = f.read().strip()
 
 setup(
     name='Pyro API',

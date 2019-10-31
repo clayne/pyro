@@ -7,7 +7,7 @@ import zipfile
 from glob import glob
 
 with open(os.path.join(os.path.dirname(__file__),'VERSION'), 'r') as f:
-    version = f.read().trim()
+    version = f.read().strip()
 
 
 class Application:
@@ -48,7 +48,7 @@ class Application:
             print('Deleted: %s' % f)
 
     def _build_zip_archive(self, path: str) -> str:
-        zip_file: str = '%s_v%s.zip' % (self.package_name, version.replace('.', '-').trim())
+        zip_file: str = '%s_v%s.zip' % (self.package_name, version.replace('.', '-').strip())
         zip_path: str = os.path.join(self.cwd, 'bin', zip_file)
         os.makedirs(os.path.dirname(zip_path), exist_ok=True)
 

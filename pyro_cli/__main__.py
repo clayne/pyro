@@ -10,7 +10,7 @@ from pyro.TimeElapsed import TimeElapsed
 from pyro.enums import GameType, ValidationState
 
 with open(os.path.join(os.path.dirname(__file__),'VERSION'), 'r') as f:
-    version = f.read().trim()
+    version = f.read().strip()
 
 class Application:
     @staticmethod
