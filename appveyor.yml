@@ -11,7 +11,6 @@ branches:
     - master
 
 skip_commits:
-  message: /^Changes:/              # Regex for matching commit message
   files:
     - CHANGELOG.md
     - LICENSE
