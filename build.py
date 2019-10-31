@@ -6,7 +6,7 @@ import sys
 import zipfile
 from glob import glob
 
-version='1.3.3'
+version='1.3.3vs4'
 
 class Application:
     def __init__(self, args: argparse.Namespace) -> None:

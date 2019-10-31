@@ -4,7 +4,7 @@ from setuptools import setup
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), mode='r') as f:
     long_description = f.read()
 
-version='1.3.3'
+version='1.3.3vs4'
 
 setup(
     name='Pyro CLI',
