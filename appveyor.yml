@@ -69,7 +69,6 @@ deploy:
   description: >
       Standalone executable Pyro CLI version $(appveyor_repo_tag_name)
       (Automated build via AppVeyor, $(appveyor_build_version))
-      $(APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED)
   provider: GitHub
   auth_token:
     secure: EhiervZBkremCKMnk/LFCC3XTbLfgu6hfWrxBIDWr9Oxf84OO4BKcH6OyH19WrBf
