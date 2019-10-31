@@ -9,6 +9,8 @@ from pyro.ProjectOptions import ProjectOptions
 from pyro.TimeElapsed import TimeElapsed
 from pyro.enums import GameType, ValidationState
 
+with open(os.path.join(os.path.dirname(__file__),'VERSION'), 'r') as f:
+    version = f.read()
 
 class Application:
     @staticmethod
@@ -57,7 +59,7 @@ class Application:
         print(  '************************************'
                 '****** Pyro CLI by fireundubh ******'
                 '************************************'
-                '    (VSCode papyrus-lang fork)')
+                '(VSCode papyrus-lang fork %s)' % version)
 
         time_elapsed = TimeElapsed()
 
@@ -99,9 +101,9 @@ class Application:
 
 if __name__ == '__main__':
     _parser = argparse.ArgumentParser(add_help=False,
-        description='Pyro CLI by fireundubh. '
+        description='Pyro CLI %s by fireundubh. (This is the vscode papyrus-lang fork maintained by NimrodX) '
             'This utility will take an extended .PPJ file and compile all Sources in parallel. '
-            'See https://github.com/fireundubh/pyro for more details on the extended PPJ format.')
+            'See https://github.com/fireundubh/pyro for more details on the extended PPJ format.' % version)
 
     _required_arguments = _parser.add_argument_group('required arguments')
 

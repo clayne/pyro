@@ -1,12 +1,15 @@
 import os
 from setuptools import setup
 
+with open(os.path.join(os.path.dirname(__file__),'..','VERSION'), 'r') as f:
+    version = f.read()
+
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), mode='r') as f:
     long_description = f.read()
 
 setup(
     name='Pyro CLI',
-    version='1.3.3',
+    version=version,
     description='An incremental build system for Skyrim Classic (TESV), Skyrim Special Edition (SSE), and Fallout 4 (FO4) projects',
     long_description=long_description,
     author='fireundubh',

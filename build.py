@@ -6,7 +6,9 @@ import sys
 import zipfile
 from glob import glob
 
-version='1.3.3'
+with open(os.path.join(os.path.dirname(__file__),'VERSION'), 'r') as f:
+    version = f.read()
+
 
 class Application:
     def __init__(self, args: argparse.Namespace) -> None:
@@ -91,6 +93,7 @@ class Application:
 
         print('Building archive...')
         shutil.copyfile(os.path.join('pyro_cli','pyro.ini'),os.path.join(dist_folder,'pyro.ini'))
+        shutil.copyfile('VERSION',os.path.join(dist_folder,'VERSION'))
         zip_created: str = self._build_zip_archive(dist_folder)
         print('Wrote archive: %s' % zip_created)
 
