@@ -44,7 +44,7 @@ cache:
 
 install:
   - ps: Set-Content -Path 'VERSION' -Value ([io.file]::ReadAllText([string](Get-Location) + '\VERSION').trim() + ".${env:APPVEYOR_BUILD_NUMBER}")
-  - ps: $env:PYROCLI_VERSION = ([io.file]::ReadAllText([string](Get-Location) + '\VERSION').trim()
+  - ps: $env:PYROCLI_VERSION = ([io.file]::ReadAllText([string](Get-Location) + '\VERSION').trim())
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade pipenv
   - which pipenv
