@@ -1,6 +1,6 @@
 version: '{branch}.{build}'            # this is $(appveyor_build_version)
 
-skip_tags: false
+skip_tags: true
 
 skip_non_tags: false
 
@@ -8,7 +8,7 @@ skip_branch_with_pr: false
 
 branches:
   only:
-    - master
+    - vscode
 
 skip_commits:
   files:
@@ -77,8 +77,8 @@ deploy:
   draft: true
   prerelease: true
   on:
-    branch: master                 # release from master branch only
-    APPVEYOR_REPO_TAG: true        # deploy on tag push only
+    branch: vscode                 # release from master branch only
+    APPVEYOR_REPO_TAG: false       # deploy on tag push only
 
 on_success:
   - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
