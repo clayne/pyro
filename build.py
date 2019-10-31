@@ -55,7 +55,7 @@ class Application:
 
         with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
             for f in files:
-                z.write(f, os.path.join(self.package_name, os.path.relpath(f, path)), compress_type=zipfile.ZIP_LZMA)
+                z.write(f, os.path.join(self.package_name, os.path.relpath(f, path)))
                 print('Added file to archive: %s' % f)
 
         return zip_path

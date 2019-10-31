@@ -51,7 +51,7 @@ install:
   - pipenv update
   - pipenv install nuitka
 
-platform: Any CPU
+platform: x64
 
 configuration: Debug
 
@@ -79,8 +79,9 @@ deploy:
   prerelease: true
   on:
     branch: vscode                 # release from master branch only
-    APPVEYOR_REPO_TAG: false       # deploy on tag push only
+    APPVEYOR_REPO_TAG: false
 
+# Discord notification script
 on_success:
   - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
   - ps: ./send.ps1 success $env:WEBHOOK_URL
