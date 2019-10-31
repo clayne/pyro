@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 
 with open(os.path.join(os.path.dirname(__file__),'..','VERSION'), 'r') as f:
-    version = f.read()
+    version = f.read().trim()
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), mode='r') as f:
     long_description = f.read()
