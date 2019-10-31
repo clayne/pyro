@@ -81,9 +81,6 @@ class Application:
             '--show-progress'
         ]
 
-#        args.append('--output-dir=%s' % self.cwd)
-#        args.append('%s' % package_path)
-
         retcode: int = subprocess.call(args)
         if retcode != 0:
             return retcode
