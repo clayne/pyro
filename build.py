@@ -11,6 +11,7 @@ from zipfile import ZIP_LZMA, ZipFile
 class Application:
     def __init__(self, args: Namespace) -> None:
         self.root_path: str = dirname(__file__)
+        print('Using path to project: %s' % self.root_path)
 
         self.package_name = args.package_name
         self.mingw64 = args.mingw64
@@ -68,6 +69,7 @@ class Application:
         return zip_path
 
     def run(self) -> int:
+        print('Cleaning: %s' % self.dist_path)
         if exists(self.dist_path):
             rmtree(self.dist_path, ignore_errors=True)
 
@@ -91,11 +93,13 @@ class Application:
         if self.mingw64:
             args.append('--mingw64')
 
+        print('Executing command: %s' % ' '.join(args))
         retcode: int = call(args)
         if retcode != 0:
+            print('Command failed to execute. Return code: %s' % retcode)
             return retcode
 
-        print('Cleaning up dist folder...')
+        print('Removing unnecessary files...')
         self._clean_dist_folder()
 
         print('Copying tools...')
