@@ -7,8 +7,9 @@ from shutil import copy2, rmtree
 from subprocess import call
 from zipfile import ZIP_LZMA, ZipFile
 
-version = '1.3.4'
 
+with open(join(dirname(__file__),'VERSION'), 'r') as f:
+    version = f.read().strip()
 
 class Application:
     def __init__(self, args: Namespace) -> None:
