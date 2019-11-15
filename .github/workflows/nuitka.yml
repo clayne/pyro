@@ -18,14 +18,13 @@ jobs:
       with:
         python-version: 3.7.5
         architecture: x64
-    - name: Activate virtualenv
-      run: pipenv shell
-    - name: Install dependencies
-      run: pipenv install
     - name: Run build script
-      run: pipenv run build.py --mingw64
+      run: |
+       pipenv shell
+       pipenv install
+       pipenv run build.py --mingw64
     - name: Upload artifact
       uses: actions/upload-artifact@v1
       with:
         name: pyro
-        path: C:\bin\pyro.zip
+        path: D:\a\pyro\pyro\bin\pyro.zip
