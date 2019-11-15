@@ -25,7 +25,7 @@ jobs:
       run: pipenv install
     - name: Run build script
       if: success()
-      run: python D:\a\pyro\pyro\build.py --mingw64
+      run: python D:\a\pyro\pyro\build.py
     - name: Upload artifact
       if: success()
       uses: actions/upload-artifact@v1
