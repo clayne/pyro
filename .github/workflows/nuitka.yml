@@ -13,14 +13,17 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: dschep/install-pipenv-action@v1
-    - name: Set up Python 3.7.5
+    - name: Set up Python 3.7.5 (x64)
       uses: actions/setup-python@v1
       with:
         python-version: 3.7.5
+        architecture: x64
+    - name: Activate virtualenv
+      run: pipenv shell
     - name: Install dependencies
-      run: pipenv install --verbose
+      run: pipenv install
     - name: Run build script
-      run: pipenv run build.py
+      run: pipenv run build.py --mingw64
     - name: Upload artifact
       uses: actions/upload-artifact@v1
       with:
