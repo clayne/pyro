@@ -10,9 +10,6 @@ from zipfile import ZIP_LZMA, ZipFile
 version = '1.3.4'
 
 
-with open(os.path.join(os.path.dirname(__file__),'VERSION'), 'r') as f:
-    version = f.read().strip()
-
 class Application:
     def __init__(self, args: Namespace) -> None:
         self.root_path: str = dirname(__file__)
@@ -51,19 +48,23 @@ class Application:
                  if isfile(f) and not f.endswith(files_to_keep)]
 
         for f in files:
-            os.remove(f)
+            remove(f)
             print('Deleted: %s' % f)
 
-    def _build_zip_archive(self, path: str) -> str:
-        zip_file: str = '%s_v%s.zip' % (self.package_name, version.replace('.', '-').strip())
-        zip_path: str = os.path.join(self.cwd, 'bin', zip_file)
-        os.makedirs(os.path.dirname(zip_path), exist_ok=True)
+        site_dir = join(self.dist_path, 'site')
+        if exists(site_dir):
+            rmtree(site_dir, ignore_errors=True)
 
-        files: list = [f for f in glob(os.path.join(path, '**\*'), recursive=True) if os.path.isfile(f)]
+    def _build_zip_archive(self) -> str:
+        zip_file: str = '%s_v%s.zip' % (self.package_name, version.replace('.', '-'))
+        zip_path: str = join(self.root_path, 'bin', zip_file)
+        makedirs(dirname(zip_path), exist_ok=True)
 
-        with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        files = [f for f in glob(join(self.dist_path, '**\*'), recursive=True) if isfile(f)]
+
+        with ZipFile(zip_path, 'w', compression=ZIP_LZMA) as z:
             for f in files:
-                z.write(f, os.path.join(self.package_name, os.path.relpath(f, path)))
+                z.write(f, join(self.package_name, relpath(f, self.dist_path)), compress_type=ZIP_LZMA)
                 print('Added file to archive: %s' % f)
 
         return zip_path
@@ -102,9 +103,7 @@ class Application:
             copy2(join(self.root_tools_path, f), join(self.dist_tools_path, f))
 
         print('Building archive...')
-        shutil.copyfile(os.path.join('pyro_cli','pyro.ini'),os.path.join(dist_folder,'pyro.ini'))
-        shutil.copyfile('VERSION',os.path.join(dist_folder,'VERSION'))
-        zip_created: str = self._build_zip_archive(dist_folder)
+        zip_created: str = self._build_zip_archive()
         print('Wrote archive: %s' % zip_created)
 
         return 0
