@@ -7,8 +7,6 @@ from shutil import copy2, rmtree
 from subprocess import call
 from zipfile import ZIP_LZMA, ZipFile
 
-version = '1.3.4'
-
 
 class Application:
     def __init__(self, args: Namespace) -> None:
@@ -56,8 +54,7 @@ class Application:
             rmtree(site_dir, ignore_errors=True)
 
     def _build_zip_archive(self) -> str:
-        zip_file: str = '%s_v%s.zip' % (self.package_name, version.replace('.', '-'))
-        zip_path: str = join(self.root_path, 'bin', zip_file)
+        zip_path: str = join(self.root_path, 'bin', '%s.zip' % self.package_name)
         makedirs(dirname(zip_path), exist_ok=True)
 
         files = [f for f in glob(join(self.dist_path, '**\*'), recursive=True) if isfile(f)]
