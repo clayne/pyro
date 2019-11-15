@@ -12,6 +12,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Set up Visual Studio environment
+      if: success()
+      uses: seanmiddleditch/gha-setup-vsdevenv@v1
     - name: Set up Python 3.7.5 (x64)
       if: success()
       uses: actions/setup-python@v1
@@ -22,9 +25,7 @@ jobs:
       if: success()
     - name: Install dependencies
       if: success()
-      run: |
-       pipenv install
-       pipenv install pywin32
+      run: pipenv install
     - name: Run build script
       if: success()
       run: python D:\a\pyro\pyro\build.py
