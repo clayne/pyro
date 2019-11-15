@@ -13,6 +13,7 @@ class Application:
         self.root_path: str = dirname(__file__)
 
         self.package_name = args.package_name
+        self.mingw64 = args.mingw64
 
         self.dist_path = join(self.root_path, '%s.dist' % self.package_name)
         self.root_tools_path = join(self.root_path, 'tools')
@@ -87,6 +88,9 @@ class Application:
             '--file-reference-choice=runtime'
         ]
 
+        if self.mingw64:
+            args.append('--mingw64')
+
         retcode: int = call(args)
         if retcode != 0:
             return retcode
@@ -109,4 +113,5 @@ class Application:
 if __name__ == '__main__':
     _parser = ArgumentParser()
     _parser.add_argument('-p', '--package-name', action='store', type=str, default='pyro')
+    _parser.add_argument('--mingw64', action='store_true', default=False)
     Application(_parser.parse_args()).run()
