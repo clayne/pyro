@@ -1,12 +1,9 @@
-import configparser
 import os
 import sys
 
 from pyro.Logger import Logger
 from pyro.PathHelper import PathHelper
 from pyro.ProjectOptions import ProjectOptions
-from pyro.TimeElapsed import TimeElapsed
-from pyro.enums import GameType, ValidationState
 
 
 class Project:
@@ -14,94 +11,98 @@ class Project:
     log = Logger()
 
     def __init__(self, options: ProjectOptions):
-        self._ini: configparser.ConfigParser = configparser.ConfigParser()
-        self._ini.read(options.pyro_cfg_path)
-        self.game_path = None
-
         self.options: ProjectOptions = options
-
-    @property
-    def is_fallout4(self) -> bool:
-        return self.options.game_type == GameType.Fallout4
-
-    @property
-    def is_skyrim_special_edition(self) -> bool:
-        return self.options.game_type == GameType.SkyrimSpecialEdition
-
-    @property
-    def is_skyrim_classic(self) -> bool:
-        return self.options.game_type == GameType.SkyrimClassic
 
     def _winreg_get_game_path(self) -> str:
         """Retrieve installed path of game using Windows Registry"""
         import winreg
 
-        game_type = self.options.game_type
-        key_path, key_value = os.path.split(self._ini[game_type.name]['Registry'])
+        registry_type = winreg.HKEY_LOCAL_MACHINE
+
+        if not self.options.registry_path:
+            if self.options.game_type == 'fo4':
+                self.options.registry_path = r'SOFTWARE\WOW6432Node\Bethesda Softworks\Fallout4\Installed Path'
+            elif self.options.game_type == 'tesv':
+                self.options.registry_path = r'SOFTWARE\WOW6432Node\Bethesda Softworks\Skyrim\Installed Path'
+            elif self.options.game_type == 'sse':
+                self.options.registry_path = r'SOFTWARE\WOW6432Node\Bethesda Softworks\Skyrim Special Edition\Installed Path'
+
+        key_path, key_value = os.path.split(self.options.registry_path)
+
+        # fix absolute registry paths, if needed
+        key_parts = key_path.split(os.sep)
+        if key_parts[0] in ('HKCU', 'HKEY_CURRENT_USER', 'HKLM', 'HKEY_LOCAL_MACHINE'):
+            if key_parts[0] in ('HKCU', 'HKEY_CURRENT_USER'):
+                registry_type = winreg.HKEY_CURRENT_USER
+            key_path = os.sep.join(key_parts[1:])
 
         try:
-            registry_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path, 0, winreg.KEY_READ)
+            registry_key = winreg.OpenKey(registry_type, key_path, 0, winreg.KEY_READ)
             reg_value, reg_type = winreg.QueryValueEx(registry_key, key_value)
             winreg.CloseKey(registry_key)
         except WindowsError:
-            raise Exception('Game does not exist in Windows Registry. Run the game launcher once, then try again.')
+            sys.exit(self.log.error('Game does not exist in Windows Registry. Run the game launcher once, then try again.'))
 
+        # noinspection PyUnboundLocalVariable
         if not os.path.exists(reg_value):
-            raise Exception('Directory does not exist:', reg_value)
+            sys.exit(self.log.error('Directory does not exist: %s' % reg_value))
 
         return reg_value
 
-    @staticmethod
-    def validate_script(script_path: str, time_elapsed: TimeElapsed) -> ValidationState:
-        script_path = os.path.abspath(script_path)
-
-        if not os.path.exists(script_path):
-            Project.log.pyro('ERROR: Failed to write file: {0} (file does not exist)'.format(script_path))
-            return ValidationState.FILE_NOT_EXIST
-
-        if time_elapsed.start_time < os.stat(script_path).st_mtime < time_elapsed.end_time:
-            Project.log.pyro('INFO: Wrote file: {0}'.format(script_path))
-            return ValidationState.FILE_MODIFIED
-
-        Project.log.pyro('INFO: Skipped writing file: {0} (not recently modified)'.format(script_path))
-        return ValidationState.FILE_NOT_MODIFIED
-
     def get_bsarch_path(self) -> str:
-        return PathHelper.parse(self._ini['Pyro']['BSArchPath'], self.get_game_path())
+        # try to get bsarch path from arguments
+        if self.options.bsarch_path != '':
+            if os.path.isabs(self.options.bsarch_path):
+                return self.options.bsarch_path
+            return PathHelper.parse(self.options.bsarch_path, self.options.game_path)
+
+        # try to get bsarch path from expected locations
+        local_paths = (r'.\tools\bsarch.exe', r'..\tools\bsarch.exe')
+        for path in local_paths:
+            bsarch_path = os.path.realpath(os.path.join(os.path.dirname(__file__), path))
+            if os.path.exists(bsarch_path):
+                self.options.bsarch_path = bsarch_path
+                return self.options.bsarch_path
+
+        self.log.error('Cannot find path to BSArch.exe. Set the path or disable integration.')
 
     def get_compiler_path(self) -> str:
-        """Retrieve compiler path from pyro.ini"""
-        return PathHelper.parse(self._ini['Compiler']['Path'], self.get_game_path())
+        """Retrieve compiler path from arguments"""
+        return os.path.join(self.options.game_path, self.options.compiler_path)
 
     def get_flags_path(self) -> str:
-        """Retrieve flags path from pyro.ini"""
-        return PathHelper.parse(self._ini[self.options.game_type.name]['Flags'], self.get_game_path())
+        """Retrieve flags path from arguments"""
+        if self.options.flags_path:
+            return os.path.join(self.options.game_path, self.options.flags_path)
+
+        if self.options.game_type == 'fo4':
+            self.options.flags_path = os.path.join(self.options.base_path, 'Institute_Papyrus_Flags.flg')
+        elif self.options.game_type == 'tesv':
+            self.options.flags_path = os.path.join(self.options.source_path, 'TESV_Papyrus_Flags.flg')
+        elif self.options.game_type == 'sse':
+            self.options.flags_path = os.path.join(self.options.base_path, 'TESV_Papyrus_Flags.flg')
+
+        return os.path.join(self.options.game_path, self.options.flags_path)
 
     def get_game_path(self) -> str:
-        """Retrieve game path from either pyro.ini or Windows Registry"""
-        if self.game_path:
-            return self.game_path
-        game_path = self._ini['Shared']['GamePath']
-
-        if len(game_path) > 0 and os.path.exists(game_path):
-            self.game_path = game_path
-            return game_path
+        """Retrieve game path from arguments or Windows Registry"""
+        if self.options.game_path and os.path.exists(self.options.game_path):
+            return self.options.game_path
 
         if sys.platform == 'win32':
-            game_path = self._winreg_get_game_path()
-            self.game_path = game_path
-            return game_path
+            self.options.game_path = self._winreg_get_game_path()
+            return self.options.game_path
 
-        raise ValueError('Cannot retrieve game path from pyro.ini or Windows Registry')
+        if sys.platform == 'win32':
+            raise ValueError('Cannot retrieve game path from arguments or Windows Registry')
+
+        raise ValueError('Cannot retrieve game path from arguments')
 
     def get_scripts_base_path(self) -> str:
-        game_path = self.get_game_path()
-        return os.path.join(game_path, self._ini['Shared']['BasePath'])
+        return os.path.join(self.options.game_path, self.options.base_path)
 
     def get_scripts_source_path(self) -> str:
-        game_path = self.get_game_path()
-        return os.path.join(game_path, self._ini['Shared']['SourcePath'])
+        return os.path.join(self.options.game_path, self.options.source_path)
 
     def get_scripts_user_path(self) -> str:
-        game_path = self.get_game_path()
-        return os.path.join(game_path, self._ini['Shared']['UserPath'])
+        return os.path.join(self.options.game_path, self.options.user_path)

@@ -11,7 +11,7 @@ setup(
     author='fireundubh',
     author_email='fireundubh@gmail.com',
     license='MIT License',
-    packages=['pyro'],
+    packages=find_packages(),
     zip_safe=False,
     classifiers=[
         'Programming Language :: Python :: 3',
