@@ -7,5 +7,6 @@ pyro.build/
 pyro.dist/
 pyro_cli.build/
 pyro_cli.dist/
+Pipfile.lock
 database/
 bin/
