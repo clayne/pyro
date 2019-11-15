@@ -5,7 +5,7 @@ from os import makedirs, remove
 from os.path import dirname, exists, isfile, join, normpath, relpath
 from shutil import copy2, rmtree
 from subprocess import call
-from zipfile import ZIP_LZMA, ZipFile
+from zipfile import ZIP_DEFLATED, ZipFile
 
 
 with open(join(dirname(__file__),'VERSION'), 'r') as f:
@@ -42,7 +42,8 @@ class Application:
             '_socket.pyd',
             'select.pyd',
             '_elementpath.pyd',
-            'etree.pyd'
+            'etree.pyd',
+            'VERSION'
         )
 
         files = [f for f in glob(join(self.dist_path, '**\*'), recursive=True)
@@ -63,9 +64,9 @@ class Application:
 
         files = [f for f in glob(join(self.dist_path, '**\*'), recursive=True) if isfile(f)]
 
-        with ZipFile(zip_path, 'w', compression=ZIP_LZMA) as z:
+        with ZipFile(zip_path, 'w', compression=ZIP_DEFLATED, compresslevel=9) as z:
             for f in files:
-                z.write(f, join(self.package_name, relpath(f, self.dist_path)), compress_type=ZIP_LZMA)
+                z.write(f, join(self.package_name, relpath(f, self.dist_path)), compress_type=ZIP_DEFLATED)
                 print('Added file to archive: %s' % f)
 
         return zip_path
