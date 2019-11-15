@@ -22,7 +22,9 @@ jobs:
       if: success()
     - name: Install dependencies
       if: success()
-      run: pipenv install
+      run: |
+       pipenv install
+       pipenv install pywin32
     - name: Run build script
       if: success()
       run: python D:\a\pyro\pyro\build.py
