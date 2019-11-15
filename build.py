@@ -4,7 +4,7 @@ from glob import glob
 from os import makedirs, remove
 from os.path import dirname, exists, isfile, join, normpath, relpath
 from shutil import copy2, rmtree
-from subprocess import call
+from subprocess import check_call, CalledProcessError
 from zipfile import ZIP_LZMA, ZipFile
 
 
@@ -94,10 +94,14 @@ class Application:
             args.append('--mingw64')
 
         print('Executing command: %s' % ' '.join(args))
-        retcode: int = call(args)
-        if retcode != 0:
-            print('Command failed to execute. Return code: %s' % retcode)
-            return retcode
+        try:
+            check_call(args)
+        except CalledProcessError as e:
+            print('Failed to execute command: %s' % e.cmd)
+            print('Resetting: %s' % self.dist_path)
+            if exists(self.dist_path):
+                rmtree(self.dist_path, ignore_errors=True)
+            return e.returncode
 
         print('Removing unnecessary files...')
         self._clean_dist_folder()
