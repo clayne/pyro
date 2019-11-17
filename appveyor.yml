@@ -18,8 +18,10 @@ skip_commits:
     - .gitignore
     - Pipfile.lock
 
-image: Visual Studio 2019 
+# Need 215 version to get mingw in VM
+image: Visual Studio 2015 
 
+# Set to true to skip cache restore or save
 environment:
   APPVEYOR_CACHE_SKIP_RESTORE: 'false'
   APPVEYOR_CACHE_SKIP_SAVE: 'false'
@@ -29,7 +31,6 @@ environment:
 matrix:
   fast_finish: true
 
-# Set to true to skip cache restore or save
 init:
   - ps: $env:PATH="$env:PYTHON;$env:PYTHON\Scripts;$env:PATH"
   - ps: echo "$env:PATH"
