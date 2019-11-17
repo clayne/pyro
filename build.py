@@ -14,7 +14,7 @@ with open(join(dirname(__file__),'VERSION'), 'r') as f:
 class Application:
     def __init__(self, args: Namespace) -> None:
         self.root_path: str = dirname(__file__)
-        print('Using path to project: %s' % self.root_path)
+        print('Using path to project: "%s"' % self.root_path)
 
         self.package_name = args.package_name
         self.loose = args.loose

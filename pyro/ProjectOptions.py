@@ -1,12 +1,11 @@
 import os
 
-from argparse import Namespace
 from dataclasses import dataclass, field
 
 
 @dataclass
 class ProjectOptions:
-    args: Namespace = field(repr=False, default_factory=Namespace)
+    args: dict = field(repr=False, default_factory=dict)
 
     # required arguments
     input_path: str = field(init=False, default_factory=str)
@@ -40,21 +39,18 @@ class ProjectOptions:
             if key == 'args':
                 continue
             try:
-                user_value = getattr(self.args, key)
-                if user_value and user_value != getattr(self, key):
-                    setattr(self, key, user_value)
+                value = self.args.get(key)
+                if value and value != getattr(self, key):
+                    setattr(self, key, value)
             except AttributeError:
                 continue
 
-    def __setattr__(self, key: str, value: str) -> None:
+    def __setattr__(self, key: str, value: object) -> None:
         # sanitize paths
-        if key.endswith('path'):
+        if isinstance(value, str) and key.endswith('path'):
             value = os.path.normpath(value)
             # normpath converts empty paths to os.curdir which we don't want
             if value == '.':
                 value = ''
-
-        if key == 'game_type':
-            value = value.casefold()
 
         super(ProjectOptions, self).__setattr__(key, value)

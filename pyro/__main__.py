@@ -31,17 +31,17 @@ class Application:
             sys.exit(print_help())
 
         if not os.path.isabs(self.args.input_path):
-            self.log.warn('Relative input path detected. Using current working directory: ' + os.getcwd())
+            self.log.warn('Using working directory: "%s"' % os.getcwd())
             self.args.input_path = os.path.join(os.getcwd(), self.args.input_path.replace('file://', ''))
-            self.log.warn('Using input path: ' + self.args.input_path)
+            self.log.warn('Using input path: "%s"' % self.args.input_path)
 
     def run(self) -> int:
-        options = ProjectOptions(self.args)
+        options = ProjectOptions(self.args.__dict__)
         ppj = PapyrusProject(options)
 
         # allow xml to set game type but defer to passed argument
         if not ppj.options.game_type:
-            game_type = ppj.root_node.get('Game')
+            game_type = ppj.root_node.get('Game', default='').casefold()
             if game_type:
                 ppj.options.game_type = game_type
 
@@ -59,6 +59,8 @@ class Application:
         build.try_pack()
 
         time_elapsed.print(callback_func=self.log.pyro)
+
+        self.log.pyro('DONE!')
 
         return 0
 
@@ -80,10 +82,10 @@ if __name__ == '__main__':
     _build_arguments = _parser.add_argument_group('build arguments')
     _build_arguments.add_argument('--no-anonymize',
                                   action='store_true', default=False,
-                                  help='do not anonymize metadata (if configured in ppj)')
+                                  help='do not anonymize metadata')
     _build_arguments.add_argument('--no-bsarch',
                                   action='store_true', default=False,
-                                  help='do not pack scripts with BSArch (if configured in ppj)')
+                                  help='do not pack scripts with bsarch')
     _build_arguments.add_argument('--no-incremental-build',
                                   action='store_true', default=False,
                                   help='do not build incrementally')
@@ -115,7 +117,7 @@ if __name__ == '__main__':
     if sys.platform == 'win32':
         _game_path_arguments.add_argument('--registry-path',
                                           action='store', type=str,
-                                          help='path to Installed Path key for game in Windows Registry')
+                                          help='path to Installed Path key in Windows Registry')
 
     _bsarch_arguments = _parser.add_argument_group('bsarch arguments')
     _bsarch_arguments.add_argument('--bsarch-path',
@@ -123,7 +125,7 @@ if __name__ == '__main__':
                                    help='relative or absolute path to bsarch.exe')
     _bsarch_arguments.add_argument('--archive-path',
                                    action='store', type=str,
-                                   help='relative or absolute path to zip file')
+                                   help='relative or absolute path to bsa/ba2 file')
     _bsarch_arguments.add_argument('--temp-path',
                                    action='store', type=str,
                                    help='relative or absolute path to temp folder')
