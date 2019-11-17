@@ -4,7 +4,7 @@ from glob import glob
 from os import makedirs, remove
 from os.path import dirname, exists, isfile, join, normpath, relpath
 from shutil import copy2, rmtree
-from subprocess import call
+from subprocess import check_call, CalledProcessError
 from zipfile import ZIP_DEFLATED, ZipFile
 
 
