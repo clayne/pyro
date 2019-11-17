@@ -39,7 +39,7 @@ class ProjectBase:
             if os.path.abspath(self.options.output_path):
                 return self.options.output_path
             return os.path.join(os.getcwd(), self.options.output_path)
-        return os.path.realpath(os.path.join(self.program_path, os.pardir, 'out'))
+        return self.options.output_path
 
     # game arguments
     def get_game_path(self) -> str:
