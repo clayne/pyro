@@ -18,8 +18,9 @@ skip_commits:
     - .gitignore
     - Pipfile.lock
 
-# Need 215 version to get mingw in VM
-image: Visual Studio 2015 
+# Need 2015 version to get mingw in VM
+# Not using mingw right now
+image: Visual Studio 2019 
 
 # Set to true to skip cache restore or save
 environment:
@@ -58,8 +59,9 @@ configuration: Debug
 
 build: off                          # disable Visual Studio SLN build process
 
+# add --mingw64 for mingw
 build_script:
-  - pipenv run python build.py --mingw64
+  - pipenv run python build.py
 
 test: off
 
