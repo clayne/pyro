@@ -17,13 +17,14 @@ class Application:
         print('Using path to project: %s' % self.root_path)
 
         self.package_name = args.package_name
+        self.loose = args.loose
         self.mingw64 = args.mingw64
 
         self.dist_path = join(self.root_path, '%s.dist' % self.package_name)
         self.root_tools_path = join(self.root_path, 'tools')
         self.dist_tools_path = join(self.dist_path, 'tools')
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key: str, value: str) -> None:
         # sanitize paths
         if key.endswith('path'):
             value = normpath(value)
@@ -115,9 +116,10 @@ class Application:
         for f in ('bsarch.exe', 'bsarch.license.txt'):
             copy2(join(self.root_tools_path, f), join(self.dist_tools_path, f))
 
-        print('Building archive...')
-        zip_created: str = self._build_zip_archive()
-        print('Wrote archive: %s' % zip_created)
+        if not self.loose:
+            print('Building archive...')
+            zip_created: str = self._build_zip_archive()
+            print('Wrote archive: %s' % zip_created)
 
         return 0
 
@@ -125,5 +127,6 @@ class Application:
 if __name__ == '__main__':
     _parser = ArgumentParser()
     _parser.add_argument('-p', '--package-name', action='store', type=str, default='pyro')
+    _parser.add_argument('--loose', action='store_true', default=False)
     _parser.add_argument('--mingw64', action='store_true', default=False)
     Application(_parser.parse_args()).run()
