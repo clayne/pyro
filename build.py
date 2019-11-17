@@ -14,8 +14,10 @@ with open(join(dirname(__file__),'VERSION'), 'r') as f:
 class Application:
     def __init__(self, args: Namespace) -> None:
         self.root_path: str = dirname(__file__)
+        print('Using path to project: %s' % self.root_path)
 
         self.package_name = args.package_name
+        self.mingw64 = args.mingw64
 
         self.dist_path = join(self.root_path, '%s.dist' % self.package_name)
         self.root_tools_path = join(self.root_path, 'tools')
@@ -58,8 +60,7 @@ class Application:
             rmtree(site_dir, ignore_errors=True)
 
     def _build_zip_archive(self) -> str:
-        zip_file: str = '%s_v%s.zip' % (self.package_name, version.replace('.', '-'))
-        zip_path: str = join(self.root_path, 'bin', zip_file)
+        zip_path: str = join(self.root_path, 'bin', '%s.zip' % self.package_name)
         makedirs(dirname(zip_path), exist_ok=True)
 
         files = [f for f in glob(join(self.dist_path, '**\*'), recursive=True) if isfile(f)]
@@ -72,6 +73,7 @@ class Application:
         return zip_path
 
     def run(self) -> int:
+        print('Cleaning: %s' % self.dist_path)
         if exists(self.dist_path):
             rmtree(self.dist_path, ignore_errors=True)
 
@@ -92,11 +94,20 @@ class Application:
             '--file-reference-choice=runtime'
         ]
 
-        retcode: int = call(args)
-        if retcode != 0:
-            return retcode
+        if self.mingw64:
+            args.append('--mingw64')
 
-        print('Cleaning up dist folder...')
+        print('Executing command: %s' % ' '.join(args))
+        try:
+            check_call(args)
+        except CalledProcessError as e:
+            print('Failed to execute command: %s' % e.cmd)
+            print('Resetting: %s' % self.dist_path)
+            if exists(self.dist_path):
+                rmtree(self.dist_path, ignore_errors=True)
+            return e.returncode
+
+        print('Removing unnecessary files...')
         self._clean_dist_folder()
 
         print('Copying tools...')
@@ -114,4 +125,5 @@ class Application:
 if __name__ == '__main__':
     _parser = ArgumentParser()
     _parser.add_argument('-p', '--package-name', action='store', type=str, default='pyro')
+    _parser.add_argument('--mingw64', action='store_true', default=False)
     Application(_parser.parse_args()).run()
