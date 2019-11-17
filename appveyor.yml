@@ -21,7 +21,7 @@ skip_commits:
 image: Visual Studio 2019 
 
 environment:
-  APPVEYOR_CACHE_SKIP_RESTORE: 'false'
+  APPVEYOR_CACHE_SKIP_RESTORE: 'true'
   APPVEYOR_CACHE_SKIP_SAVE: 'false'
   matrix:
     - PYTHON: "C:\\Python37"
