@@ -58,7 +58,7 @@ configuration: Debug
 build: off                          # disable Visual Studio SLN build process
 
 build_script:
-  - pipenv run python build.py
+  - pipenv run python build.py --mingw64
 
 test: off
 
