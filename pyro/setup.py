@@ -1,12 +1,7 @@
-from setuptools import setup
-import os
-
-with open(os.path.join(os.path.dirname(__file__),'..','VERSION'), 'r') as f:
-    version = f.read().strip()
+from setuptools import find_packages, setup
 
 setup(
     name='Pyro',
-    version=version,
     description='An incremental build system for Skyrim Classic (TESV), Skyrim Special Edition (SSE), and Fallout 4 (FO4) projects',
     author='fireundubh',
     author_email='fireundubh@gmail.com',

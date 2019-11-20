@@ -49,6 +49,7 @@ class Application:
             'VERSION'
         )
 
+
         files = [f for f in glob(join(self.dist_path, '**\*'), recursive=True)
                  if isfile(f) and not f.endswith(files_to_keep)]
 
