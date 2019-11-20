@@ -1,5 +1,9 @@
 # Changelog
 
+## 20191119vsc
+
+Change version number scheme to date. Add all of fire's new changes. At this point there's no real difference between this and fireundubh's version except for the build running on appveyor.
+
 ## v1.3.3vs4
 
 Make sure that every time this is run by the extension everyone knows this is a contribution by fireundubh since it's being bundled and it's not entirely obvious. Also I'm changing the version numbering for the fork to use firundubh's version (v1.3.3 etc) plus vs followed by a sequence number. This way you'll be able to tell what version of the master repo it is based on, but will know it's a fork for vscode and something about how it differs.

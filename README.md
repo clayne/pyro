@@ -1,8 +1,8 @@
 # Note About This Fork
 
-Note that this is a fork of the original project at [fireundubh/pyro](https://github.com/fireundubh/pyro). It exists primarily so I can maintain a fork of the project intended to work with the [joelday/papyrus-lang](https://github.com/joelday/papyrus-lang) VSCode extension. Note that fireundubh is still adding new features slowly and this fork could be missing them so always check the status of the original project before using this.
+Note that this is a fork of the original project at [fireundubh/pyro](https://github.com/fireundubh/pyro). It exists primarily so I can maintain a fork of the project intended to work with the [joelday/papyrus-lang](https://github.com/joelday/papyrus-lang) VSCode extension. This fork is practically guaranteed to be missing features in the original repo. It's not a "competing fork".
 
-Original documentation is below with some build documentation added.
+Original documentation is below.
 
 # Pyro
 
