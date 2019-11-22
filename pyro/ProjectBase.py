@@ -5,9 +5,7 @@ from pyro.Logger import Logger
 from pyro.ProjectOptions import ProjectOptions
 
 
-class ProjectBase:
-    log = Logger()
-
+class ProjectBase(Logger):
     def __init__(self, options: ProjectOptions) -> None:
         self.options: ProjectOptions = options
 
@@ -16,6 +14,15 @@ class ProjectBase:
             self.program_path = os.path.abspath(os.path.join(self.program_path, os.pardir))
 
         self.project_path = os.path.dirname(self.options.input_path)
+
+    def __setattr__(self, key: str, value: object) -> None:
+        if key.endswith('path') and isinstance(value, str):
+            value = os.path.normpath(value)
+            if value == '.':
+                value = ''
+        elif key.endswith('paths') and isinstance(value, list):
+            value = [os.path.normpath(path) for path in value]
+        super(ProjectBase, self).__setattr__(key, value)
 
     # compiler arguments
     def get_compiler_path(self) -> str:
@@ -44,7 +51,7 @@ class ProjectBase:
             if os.path.isabs(self.options.output_path):
                 return self.options.output_path
             return os.path.join(self.project_path, self.options.output_path)
-        return os.path.abspath(os.path.join(self.program_path, os.pardir, 'out'))
+        return os.path.abspath(os.path.join(self.program_path, 'out'))
 
     # game arguments
     def get_game_path(self) -> str:
@@ -57,7 +64,8 @@ class ProjectBase:
         if sys.platform == 'win32':
             return self.get_registry_path()
 
-        sys.exit(self.log.error('Cannot locate game path'))
+        ProjectBase.log.error('Cannot locate game path')
+        sys.exit(1)
 
     def get_registry_path(self) -> str:
         """Returns absolute game path using Windows Registry"""
@@ -88,11 +96,13 @@ class ProjectBase:
             reg_value, reg_type = winreg.QueryValueEx(registry_key, key_value)
             winreg.CloseKey(registry_key)
         except WindowsError:
-            sys.exit(self.log.error('Game does not exist in Windows Registry. Run the game launcher once, then try again.'))
+            ProjectBase.log.error('Game does not exist in Windows Registry. Run the game launcher once, then try again.')
+            sys.exit(1)
 
         # noinspection PyUnboundLocalVariable
         if not os.path.exists(reg_value):
-            sys.exit(self.log.error('Directory does not exist: %s' % reg_value))
+            ProjectBase.log.error('Directory does not exist: %s' % reg_value)
+            sys.exit(1)
 
         return reg_value
 
@@ -111,7 +121,7 @@ class ProjectBase:
             if os.path.isabs(self.options.archive_path):
                 return self.options.archive_path
             return os.path.join(self.project_path, self.options.archive_path)
-        return os.path.abspath(os.path.join(self.program_path, os.pardir, 'dist'))
+        return os.path.abspath(os.path.join(self.program_path, 'dist'))
 
     def get_temp_path(self) -> str:
         """Returns absolute temp path from arguments"""
@@ -119,7 +129,7 @@ class ProjectBase:
             if os.path.isabs(self.options.temp_path):
                 return self.options.temp_path
             return os.path.join(os.getcwd(), self.options.temp_path)
-        return os.path.abspath(os.path.join(self.program_path, os.pardir, 'temp'))
+        return os.path.abspath(os.path.join(self.program_path, 'temp'))
 
     # program arguments
     def get_log_path(self) -> str:
@@ -128,4 +138,4 @@ class ProjectBase:
             if os.path.isabs(self.options.log_path):
                 return self.options.log_path
             return os.path.join(os.getcwd(), self.options.log_path)
-        return os.path.abspath(os.path.join(self.program_path, os.pardir, 'logs'))
+        return os.path.abspath(os.path.join(self.program_path, 'logs'))
