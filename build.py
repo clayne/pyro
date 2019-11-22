@@ -5,13 +5,7 @@ import os
 import shutil
 import subprocess
 import sys
-from argparse import ArgumentParser, Namespace
-from glob import glob
-from os import makedirs, remove
-from os.path import dirname, exists, isfile, join, normpath, relpath
-from shutil import copy2, rmtree
-from subprocess import check_call, CalledProcessError
-from zipfile import ZIP_DEFLATED, ZipFile
+import zipfile
 
 
 class Application:
@@ -53,7 +47,7 @@ class Application:
             'etree.pyd'
         )
 
-        files: list = [f for f in glob(os.path.join(self.dist_path, '**\*'), recursive=True)
+        files: list = [f for f in glob.glob(os.path.join(self.dist_path, '**\*'), recursive=True)
                        if os.path.isfile(f) and not f.endswith(files_to_keep)]
 
         for f in files:
@@ -70,15 +64,10 @@ class Application:
 
         files: list = [f for f in glob.glob(os.path.join(self.dist_path, '**\*'), recursive=True) if os.path.isfile(f)]
 
-        zip_path: str = join(self.root_path, 'bin', '%s.zip' % self.package_name)
-        makedirs(dirname(zip_path), exist_ok=True)
-
-        files = [f for f in glob(join(self.dist_path, '**\*'), recursive=True) if isfile(f)]
-
-        with ZipFile(zip_path, 'w', compression=ZIP_DEFLATED, compresslevel=9) as z:
+        with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_STORED) as z:
             for f in files:
-                z.write(f, join(self.package_name, relpath(f, self.dist_path)), compress_type=ZIP_DEFLATED)
-                print('Added file to archive: %s' % f)
+                z.write(f, os.path.join(self.package_name, os.path.relpath(f, self.dist_path)), compress_type=zipfile.ZIP_STORED)
+                Application.log.info('Added file to archive: %s' % f)
 
         return zip_path
 
