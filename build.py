@@ -53,7 +53,7 @@ class Application:
             'etree.pyd'
         )
 
-        files: list = [f for f in glob.glob(os.path.join(self.dist_path, '**\*'), recursive=True)
+        files: list = [f for f in glob(os.path.join(self.dist_path, '**\*'), recursive=True)
                        if os.path.isfile(f) and not f.endswith(files_to_keep)]
 
         for f in files:
